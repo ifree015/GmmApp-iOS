@@ -1,0 +1,6 @@
+framework module Pods_GmmApp {
+  umbrella header "Pods-GmmApp-umbrella.h"
+
+  export *
+  module * { export * }
+}

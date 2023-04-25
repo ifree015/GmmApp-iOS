@@ -7,10 +7,11 @@
 
 // Configuration settings file format documentation can be found at:
 // https://help.apple.com/xcode/#/dev745c5c974
+#include "Pods/Target Support Files/Pods-GmmApp/Pods-GmmApp.debug.xcconfig"
 APP_BUNDLE_ID=kr.co.tmoney.bfcs.gmmapp.dev
 APP_NAME=단말기현장관리개발
 
 //WEB_ROOT_URL=https:/${}/203.251.176.179:3000/
 WEB_ROOT_URL=https:/${}/bfcs.tmoney.co.kr/html/gmm/index.html
 //WEB_ROOT_URL=http:/${}/192.168.144.131:3000/
-//WEB_MAIN_PAGE_URL=http:/${}/192.168.144.131:3000/#/
+WEB_MAIN_PAGE_URL=http:/${}/192.168.144.131:3000/#/
