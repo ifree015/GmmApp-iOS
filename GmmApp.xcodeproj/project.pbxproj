@@ -13,6 +13,8 @@
 		8CA9B11829F790AD00BAE335 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8CA9B11629F790AD00BAE335 /* Main.storyboard */; };
 		8CA9B11A29F790AE00BAE335 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8CA9B11929F790AE00BAE335 /* Assets.xcassets */; };
 		8CA9B11D29F790AE00BAE335 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8CA9B11B29F790AE00BAE335 /* LaunchScreen.storyboard */; };
+		8CA9B12529F7929B00BAE335 /* Config.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 8CA9B12429F7929B00BAE335 /* Config.xcconfig */; };
+		8CA9B12729F792CF00BAE335 /* ConfigPro.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 8CA9B12629F792CF00BAE335 /* ConfigPro.xcconfig */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +26,8 @@
 		8CA9B11929F790AE00BAE335 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8CA9B11C29F790AE00BAE335 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8CA9B11E29F790AE00BAE335 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8CA9B12429F7929B00BAE335 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
+		8CA9B12629F792CF00BAE335 /* ConfigPro.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ConfigPro.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -63,6 +67,8 @@
 				8CA9B11929F790AE00BAE335 /* Assets.xcassets */,
 				8CA9B11B29F790AE00BAE335 /* LaunchScreen.storyboard */,
 				8CA9B11E29F790AE00BAE335 /* Info.plist */,
+				8CA9B12429F7929B00BAE335 /* Config.xcconfig */,
+				8CA9B12629F792CF00BAE335 /* ConfigPro.xcconfig */,
 			);
 			path = GmmApp;
 			sourceTree = "<group>";
@@ -125,6 +131,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8CA9B12729F792CF00BAE335 /* ConfigPro.xcconfig in Resources */,
+				8CA9B12529F7929B00BAE335 /* Config.xcconfig in Resources */,
 				8CA9B11D29F790AE00BAE335 /* LaunchScreen.storyboard in Resources */,
 				8CA9B11A29F790AE00BAE335 /* Assets.xcassets in Resources */,
 				8CA9B11829F790AD00BAE335 /* Main.storyboard in Resources */,
@@ -282,6 +290,7 @@
 		};
 		8CA9B12229F790AE00BAE335 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8CA9B12429F7929B00BAE335 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -290,11 +299,11 @@
 				DEVELOPMENT_TEAM = JX58GPA824;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GmmApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -310,6 +319,7 @@
 		};
 		8CA9B12329F790AE00BAE335 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8CA9B12629F792CF00BAE335 /* ConfigPro.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -318,11 +328,11 @@
 				DEVELOPMENT_TEAM = JX58GPA824;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GmmApp/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
+				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

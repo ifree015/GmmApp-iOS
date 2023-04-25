@@ -1,0 +1,14 @@
+//
+//  ConfigPro.xcconfig
+//  GmmApp
+//
+//  Created by GwangHyeok Yu on 2023/04/25.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://help.apple.com/xcode/#/dev745c5c974
+APP_BUNDLE_ID=kr.co.tmoney.bfcs.gmmapp
+APP_NAME=단말기현장관리
+
+WEB_ROOT_URL=https:/${}/bfcs.tmoney.co.kr/html/gmm/index.html
+//WEB_MAIN_PAGE_URL=https:/${}/bfcs.tmoney.co.kr/html/gmm/index.html#/
