@@ -10,10 +10,12 @@ import UIKit
 @main
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-
-
+//    var isShowed: Bool = false
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        //Thread.sleep(forTimeInterval: 0.5)
+        debug("didFinishLaunchingWithOptions")
         return true
     }
 
@@ -34,3 +36,4 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+		
