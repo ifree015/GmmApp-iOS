@@ -25,7 +25,8 @@ enum AppEnvironment {
     
     enum PlistKeys: String {
         case webRootURL = "WEB_ROOT_URL"
-        case webMainPageURL = "WEB_MAIN_PAGE_URL"
+        case loginPageURL = "LOGIN_PAGE_URL"
+        case mainPageURL = "MAIN_PAGE_URL"
     }
     
     private static var infoDictionary: [String: Any] { // type 연산 property
@@ -51,13 +52,31 @@ enum AppEnvironment {
 //        }
     }()
     
-    static let webMainPageURL: URL = {
-        guard let webMainPageURLStr = AppEnvironment.infoDictionary[PlistKeys.webMainPageURL.rawValue] as? String else {
-            fatalError("Web Main Page URL not set in plist for this environment")
+    static let loginPageUrl: URL = {
+        guard let loginPageURLStr = AppEnvironment.infoDictionary[PlistKeys.loginPageURL.rawValue] as? String else {
+            fatalError("Login Page URL not set in plist for this environment")
         }
-        guard let url = URL(string: webMainPageURLStr) else {
-            fatalError("Web Main Page URL is invalid")
+        guard let url = URL(string: loginPageURLStr) else {
+            fatalError("Login Page URL is invalid")
         }
         return url
+    }()
+    
+    static let mainPageURL: URL = {
+        guard let mainPageURLStr = AppEnvironment.infoDictionary[PlistKeys.mainPageURL.rawValue] as? String else {
+            fatalError("Main Page URL not set in plist for this environment")
+        }
+        guard let url = URL(string: mainPageURLStr) else {
+            fatalError("Main Page URL is invalid")
+        }
+        return url
+    }()
+    
+    static let centPageURL: URL = {
+        return  URL(string: mainPageURL.absoluteString + "centtrcndsbl")!
+    }()
+    
+    static let trcnPageURL: URL = {
+        return URL(string: mainPageURL.absoluteString + "trcndsbl")!
     }()
 }

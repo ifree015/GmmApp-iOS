@@ -2,6 +2,8 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>이렇게 하면 단말기 현장관리에서 단말기 장애 처리 서비스를 향상할 수 있습니다.</string>
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
@@ -26,9 +28,11 @@
 			</array>
 		</dict>
 	</dict>
-	<key>WEB_MAIN_PAGE_URL</key>
-	<string>$(WEB_MAIN_PAGE_URL)</string>
+	<key>MAIN_PAGE_URL</key>
+	<string>$(MAIN_PAGE_URL)</string>
 	<key>WEB_ROOT_URL</key>
 	<string>$(WEB_ROOT_URL)</string>
+	<key>LOGIN_PAGE_URL</key>
+	<string>$(LOGIN_PAGE_URL)</string>
 </dict>
 </plist>

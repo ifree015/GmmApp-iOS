@@ -11,7 +11,7 @@
 APP_BUNDLE_ID=kr.co.tmoney.bfcs.gmmapp.dev
 APP_NAME=단말기현장관리개발
 
-//WEB_ROOT_URL=https:/${}/203.251.176.179:3000/
-WEB_ROOT_URL=https:/${}/bfcs.tmoney.co.kr/html/gmm/index.html
-//WEB_ROOT_URL=http:/${}/192.168.144.131:3000/
-WEB_MAIN_PAGE_URL=http:/${}/192.168.144.131:3000/#/
+WEB_ROOT_URL=http:/${}/211.55.26.183:3000/
+//WEB_ROOT_URL=https:/${}/bfcs.tmoney.co.kr/html/gmm/index.html
+LOGIN_PAGE_URL=${WEB_ROOT_URL}#/login
+MAIN_PAGE_URL=${WEB_ROOT_URL}#/

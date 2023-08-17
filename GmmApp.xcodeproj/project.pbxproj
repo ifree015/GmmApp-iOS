@@ -14,12 +14,20 @@
 		8C00779729FA4AAD00CA27B5 /* DeviceInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C00779629FA4AAD00CA27B5 /* DeviceInformation.swift */; };
 		8C00779929FA4B2200CA27B5 /* UserInformation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C00779829FA4B2200CA27B5 /* UserInformation.swift */; };
 		8C00779C29FA4BFF00CA27B5 /* JavascriptBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C00779B29FA4BFF00CA27B5 /* JavascriptBridge.swift */; };
+		8C27C5CB2A64E01B00B3CB14 /* GmmApplication.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C27C5CA2A64E01B00B3CB14 /* GmmApplication.swift */; };
+		8C54F0852A5BF48800B64326 /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C54F0842A5BF48800B64326 /* LoginViewController.swift */; };
+		8C54F0882A5BF5C600B64326 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8C54F0872A5BF5C600B64326 /* WebViewController.swift */; };
+		8CA695A62A6ADD1600AC3EB1 /* TabNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA695A52A6ADD1600AC3EB1 /* TabNavigationController.swift */; };
+		8CA6A39A2A67DED700984691 /* MainTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA6A3992A67DED700984691 /* MainTabBarController.swift */; };
+		8CA6A39C2A67E63F00984691 /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA6A39B2A67E63F00984691 /* HomeViewController.swift */; };
+		8CA6A39F2A680B2800984691 /* CentViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA6A39D2A680B2800984691 /* CentViewController.swift */; };
+		8CA6A3A02A680B2800984691 /* TrcnViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA6A39E2A680B2800984691 /* TrcnViewController.swift */; };
 		8CA9B11129F790AD00BAE335 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA9B11029F790AD00BAE335 /* AppDelegate.swift */; };
 		8CA9B11329F790AD00BAE335 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA9B11229F790AD00BAE335 /* SceneDelegate.swift */; };
-		8CA9B11529F790AD00BAE335 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CA9B11429F790AD00BAE335 /* ViewController.swift */; };
 		8CA9B11829F790AD00BAE335 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8CA9B11629F790AD00BAE335 /* Main.storyboard */; };
 		8CA9B11A29F790AE00BAE335 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8CA9B11929F790AE00BAE335 /* Assets.xcassets */; };
 		8CA9B11D29F790AE00BAE335 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8CA9B11B29F790AE00BAE335 /* LaunchScreen.storyboard */; };
+		8CB7526C2A7A175B0037A5CD /* PushViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8CB7526B2A7A175B0037A5CD /* PushViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,16 +39,24 @@
 		8C00779629FA4AAD00CA27B5 /* DeviceInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceInformation.swift; sourceTree = "<group>"; };
 		8C00779829FA4B2200CA27B5 /* UserInformation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserInformation.swift; sourceTree = "<group>"; };
 		8C00779B29FA4BFF00CA27B5 /* JavascriptBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JavascriptBridge.swift; sourceTree = "<group>"; };
+		8C27C5CA2A64E01B00B3CB14 /* GmmApplication.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GmmApplication.swift; sourceTree = "<group>"; };
+		8C54F0842A5BF48800B64326 /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		8C54F0872A5BF5C600B64326 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		8CA695A52A6ADD1600AC3EB1 /* TabNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TabNavigationController.swift; sourceTree = "<group>"; };
+		8CA6A3992A67DED700984691 /* MainTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = MainTabBarController.swift; path = GmmApp/MainTabBarController.swift; sourceTree = SOURCE_ROOT; };
+		8CA6A39B2A67E63F00984691 /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		8CA6A39D2A680B2800984691 /* CentViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CentViewController.swift; sourceTree = "<group>"; };
+		8CA6A39E2A680B2800984691 /* TrcnViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TrcnViewController.swift; sourceTree = "<group>"; };
 		8CA9B10D29F790AD00BAE335 /* GmmApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = GmmApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8CA9B11029F790AD00BAE335 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8CA9B11229F790AD00BAE335 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		8CA9B11429F790AD00BAE335 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		8CA9B11729F790AD00BAE335 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8CA9B11929F790AE00BAE335 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8CA9B11C29F790AE00BAE335 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8CA9B11E29F790AE00BAE335 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8CA9B12429F7929B00BAE335 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		8CA9B12629F792CF00BAE335 /* ConfigPro.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ConfigPro.xcconfig; sourceTree = "<group>"; };
+		8CB7526B2A7A175B0037A5CD /* PushViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushViewController.swift; sourceTree = "<group>"; };
 		9C4014EAB49A7DA7D7B9A1BC /* Pods-GmmApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-GmmApp.debug.xcconfig"; path = "Target Support Files/Pods-GmmApp/Pods-GmmApp.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -80,6 +96,7 @@
 				8C00779429FA4A0200CA27B5 /* AppEnviroment.swift */,
 				8C00779629FA4AAD00CA27B5 /* DeviceInformation.swift */,
 				8C00779829FA4B2200CA27B5 /* UserInformation.swift */,
+				8C27C5CA2A64E01B00B3CB14 /* GmmApplication.swift */,
 			);
 			path = common;
 			sourceTree = "<group>";
@@ -90,6 +107,19 @@
 				8C00779B29FA4BFF00CA27B5 /* JavascriptBridge.swift */,
 			);
 			path = webview;
+			sourceTree = "<group>";
+		};
+		8C54F0862A5BF58500B64326 /* controllers */ = {
+			isa = PBXGroup;
+			children = (
+				8C54F0872A5BF5C600B64326 /* WebViewController.swift */,
+				8CA6A39B2A67E63F00984691 /* HomeViewController.swift */,
+				8CA6A39D2A680B2800984691 /* CentViewController.swift */,
+				8CA6A39E2A680B2800984691 /* TrcnViewController.swift */,
+				8CA695A52A6ADD1600AC3EB1 /* TabNavigationController.swift */,
+				8CB7526B2A7A175B0037A5CD /* PushViewController.swift */,
+			);
+			path = controllers;
 			sourceTree = "<group>";
 		};
 		8CA9B10429F790AD00BAE335 = {
@@ -116,15 +146,17 @@
 				8C00779A29FA4BE800CA27B5 /* webview */,
 				8C00779329FA49D700CA27B5 /* common */,
 				8C00778E29FA402A00CA27B5 /* utils */,
+				8C54F0862A5BF58500B64326 /* controllers */,
 				8CA9B11029F790AD00BAE335 /* AppDelegate.swift */,
 				8CA9B11229F790AD00BAE335 /* SceneDelegate.swift */,
-				8CA9B11429F790AD00BAE335 /* ViewController.swift */,
 				8CA9B11629F790AD00BAE335 /* Main.storyboard */,
 				8CA9B11929F790AE00BAE335 /* Assets.xcassets */,
 				8CA9B11B29F790AE00BAE335 /* LaunchScreen.storyboard */,
 				8CA9B11E29F790AE00BAE335 /* Info.plist */,
 				8CA9B12429F7929B00BAE335 /* Config.xcconfig */,
 				8CA9B12629F792CF00BAE335 /* ConfigPro.xcconfig */,
+				8C54F0842A5BF48800B64326 /* LoginViewController.swift */,
+				8CA6A3992A67DED700984691 /* MainTabBarController.swift */,
 			);
 			path = GmmApp;
 			sourceTree = "<group>";
@@ -254,12 +286,20 @@
 			files = (
 				8C00779029FA405400CA27B5 /* LogUtils.swift in Sources */,
 				8C00779C29FA4BFF00CA27B5 /* JavascriptBridge.swift in Sources */,
-				8CA9B11529F790AD00BAE335 /* ViewController.swift in Sources */,
+				8C54F0882A5BF5C600B64326 /* WebViewController.swift in Sources */,
+				8CB7526C2A7A175B0037A5CD /* PushViewController.swift in Sources */,
+				8C27C5CB2A64E01B00B3CB14 /* GmmApplication.swift in Sources */,
+				8CA695A62A6ADD1600AC3EB1 /* TabNavigationController.swift in Sources */,
+				8CA6A39C2A67E63F00984691 /* HomeViewController.swift in Sources */,
 				8C00779229FA46A700CA27B5 /* PermissionUtils.swift in Sources */,
+				8CA6A39A2A67DED700984691 /* MainTabBarController.swift in Sources */,
 				8CA9B11129F790AD00BAE335 /* AppDelegate.swift in Sources */,
+				8CA6A3A02A680B2800984691 /* TrcnViewController.swift in Sources */,
 				8C00779529FA4A0200CA27B5 /* AppEnviroment.swift in Sources */,
+				8CA6A39F2A680B2800984691 /* CentViewController.swift in Sources */,
 				8C00779929FA4B2200CA27B5 /* UserInformation.swift in Sources */,
 				8CA9B11329F790AD00BAE335 /* SceneDelegate.swift in Sources */,
+				8C54F0852A5BF48800B64326 /* LoginViewController.swift in Sources */,
 				8C00779729FA4AAD00CA27B5 /* DeviceInformation.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -411,9 +451,9 @@
 				DEVELOPMENT_TEAM = JX58GPA824;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GmmApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "단말기현장관리개발";
+				INFOPLIST_KEY_CFBundleDisplayName = "${APP_NAME}";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 위치정보를 받아오려고 합니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "이렇게 하면 단말기 현장관리에서 단말기 장애 처리 서비스를 향상할 수 있습니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -443,12 +483,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = JX58GPA824;
+				DEVELOPMENT_TEAM = 6S324294X6;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = GmmApp/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = "단말기현장관리개발";
+				INFOPLIST_KEY_CFBundleDisplayName = "${APP_NAME}";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "사용자의 위치정보를 받아오려고 합니다.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "이렇게 하면 단말기 현장관리에서 단말기 장애 처리 서비스를 향상할 수 있습니다.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen.storyboard;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;

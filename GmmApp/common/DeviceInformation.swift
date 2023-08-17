@@ -10,6 +10,11 @@ import UIKit
 
 struct DeviceInformation {
     
+    static let shared = DeviceInformation()
+    
+    private init() {
+    }
+    
     func getDeviceId() -> String {
         // udid(40 -> 24) -> uuid(36: 32/4)
         return UIDevice.current.identifierForVendor!.uuidString
@@ -22,6 +27,7 @@ struct DeviceInformation {
         }
         
         // 2. 실제 디바이스 체크 수행
+        // TODO: 이해가 안되는 부분
         let device = UIDevice.current
         let selName = "_\("deviceInfo")ForKey:"
         let selector = NSSelectorFromString(selName)
@@ -32,7 +38,7 @@ struct DeviceInformation {
     }
     
     func getOsVersion() -> String {
-        return UIDevice.current.systemVersion // 16.2
+        return UIDevice.current.systemVersion // 16.4
     }
     
     func getAppVersionCode() -> String {
@@ -44,12 +50,12 @@ struct DeviceInformation {
     
     func getAppVersionName() -> String {
         if let info = Bundle.main.infoDictionary, let version = info["CFBundleShortVersionString"] as? String {
-            return version
+            return version // version number
         }
         return ""
     }
     
     func getRegistrationToken() -> String? {
-        return UserDefaults.standard.string(forKey: "RegistrationToken")
+        return UserDefaults.standard.string(forKey: "registrationToken")
     }
 }
