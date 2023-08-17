@@ -89,7 +89,8 @@ extension HomeViewController: WebViewBridge {
             //            let delayTime = 0.1
             //            DispatchQueue.main.asyncAfter(deadline: .now() + delayTime) {
             self.showWebView()
-            //            }
+            //            }            
+//            self.pushView(["location": "/trcndsbl/trcndsbldetail/11100/20230817100064"])
         default:
             log("not matched message")
         }

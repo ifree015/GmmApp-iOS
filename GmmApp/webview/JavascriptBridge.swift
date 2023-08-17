@@ -285,11 +285,13 @@ extension WebViewController: WKScriptMessageHandler {
     
     func changeNavigationBarAppearance(_ navigationBar: UINavigationBar) {
         let appearance = UINavigationBarAppearance()
-        //        appearance.configureWithOpaqueBackground()
+//        appearance.configureWithOpaqueBackground()
         appearance.configureWithDefaultBackground()
+//        appearance.configureWithTransparentBackground()
         appearance.backgroundColor = Theme.shared.getNaviBarBackgroundColor(self)
         appearance.titleTextAttributes = [.foregroundColor: Theme.shared.getNaviBarTintColor(self), .font: UIFont.systemFont(ofSize: CGFloat(20))]
         navigationBar.tintColor = Theme.shared.getNaviBarTintColor(self)
+        navigationBar.barTintColor = Theme.shared.getNaviBarTintBackgroundColor(self)
         navigationBar.standardAppearance = appearance
         navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
     }
@@ -463,7 +465,9 @@ struct Theme {
     let tabBarLightTintColor: UIColor = .init(hexCode: "#9c27b0")
     let tabBarDarkTintColor: UIColor = .init(hexCode: "#ce93d8")
     let naviBarLightBackground: UIColor = .init(hexCode: "#9c27b0")
+    let naviBarLightTintBackground: UIColor = .init(hexCode: "#9c27b0")
     let naviBarDarkBackground: UIColor = .init(hexCode: "#121212")
+    let naviBarDarkTintBackground: UIColor = .init(hexCode: "#121212", alpha: 0.215)
     let naviBarLightTintColor: UIColor = .white
     let naviBarDarkTintColor: UIColor = .init(hexCode: "#ce93d8")
     let subTitleLightColor: UIColor = .init(hexCode: "#ffe0b2")
@@ -493,6 +497,14 @@ struct Theme {
             return naviBarLightBackground
         } else {
             return naviBarDarkBackground
+        }
+    }
+    
+    func getNaviBarTintBackgroundColor(_ viewController: UIViewController) -> UIColor {
+        if getUserInterfaceStyle(viewController) == .light {
+            return naviBarLightTintBackground
+        } else {
+            return naviBarDarkTintBackground
         }
     }
     

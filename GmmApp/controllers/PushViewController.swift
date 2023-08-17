@@ -60,17 +60,15 @@ class PushViewController: WebViewController {
             make.bottom.equalTo(navigationBar.snp.top).offset(NAVIGATION_BAR_HEIGHT)
         }
         
-        setNavigationItem()
+        setNavigationItem(true)
     }
     
-    func setNavigationItem() {
-        self.navItem = UINavigationItem(title: "")
+    func setNavigationItem(_ animated: Bool) {
+        let navItem = UINavigationItem(title: "")
         
-        var isSubTitled = false
         if let title = viewInfo["title"] as? String, title.count > 0  {
             if let subTitle = viewInfo["subTitle"] as? String, subTitle.count > 0 {
-                navigationBar.standardAppearance.titlePositionAdjustment = UIOffset(horizontal:0, vertical: 0)
-                isSubTitled = true
+//                navigationBar.standardAppearance.titlePositionAdjustment = UIOffset(horizontal:0, vertical: 0)
                 let titleView = UIView()
                 titleView.clipsToBounds = true
                 
@@ -86,10 +84,13 @@ class PushViewController: WebViewController {
                     make.top.equalToSuperview().offset((NAVIGATION_BAR_HEIGHT - 24) / 2)
                     make.leading.trailing.equalToSuperview()
                 }
-                //                titleLabel.alpha = 0
-                //                UIView.animate(withDuration: 1, animations: {
-                //                    titleLabel.alpha = 1
-                //                })
+                
+                if animated {
+                    titleLabel.alpha = 0
+                    UIView.animate(withDuration: 1, animations: {
+                        titleLabel.alpha = 1
+                    })
+                }
                 
                 let subTitleLabel = UILabel()
                 subTitleLabel.text = subTitle
@@ -123,7 +124,8 @@ class PushViewController: WebViewController {
         //        button.addTarget(self, action: #selector(goBack), for: .touchUpInside)
         //        navItem.leftBarButtonItem = UIBarButtonItem(customView: button)
         
-        navigationBar.setItems([navItem], animated: !isSubTitled)
+        self.navItem = navItem
+        navigationBar.setItems([navItem], animated: false)
     }
     
     func setViewInfo(_ viewInfo: [String : Any]) {
@@ -141,7 +143,7 @@ class PushViewController: WebViewController {
         debug("viewInfo: \(viewInfo2)")
         
         self.viewInfo = viewInfo
-        setNavigationItem()
+        setNavigationItem(false)
     }
     
     override func initWebView() {
@@ -192,6 +194,12 @@ extension PushViewController: UIScrollViewDelegate {
         //            }
         //        }
         
+        if scrollView.contentOffset.y > 0 {
+            self.navigationBar.standardAppearance.backgroundColor = Theme.shared.getNaviBarTintBackgroundColor(self)
+        } else {
+            self.navigationBar.standardAppearance.backgroundColor = Theme.shared.getNaviBarBackgroundColor(self)
+        }
+        
         if let subTitle = viewInfo["subTitle"] as? String, subTitle.count > 0 {
             if scrollView.contentOffset.y > 0 {
                 if scrollView.contentOffset.y < (NAVIGATION_BAR_HEIGHT - 8) {
@@ -200,7 +208,7 @@ extension PushViewController: UIScrollViewDelegate {
                     UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
                         self.navItem.titleView?.bounds.origin = .init(x: 0, y: self.NAVIGATION_BAR_HEIGHT)
                     })
-                    self.view.layoutIfNeeded()
+//                    self.view.layoutIfNeeded()
                 }
             } else {
                 self.navItem.titleView?.bounds.origin = .init(x: 0, y: 0)
@@ -216,7 +224,7 @@ extension PushViewController: UIScrollViewDelegate {
                         UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
                             make.bottom.equalTo(self.navigationBar.snp.top).offset(-self.NAVIGATION_BAR_HEIGHT)
                         })
-                        self.view.layoutIfNeeded()
+//                        self.view.layoutIfNeeded()
                     }
                 }
             } else {
