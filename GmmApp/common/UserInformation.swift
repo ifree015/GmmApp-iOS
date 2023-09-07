@@ -38,11 +38,10 @@ struct UserInformation {
         UserDefaults.standard.set(autoLogin, forKey: "autoLogin")
     }
     
-    mutating func clearInfo() {
+    mutating func clearLoginInfo() {
         self.loginInfo = nil
         self.from = nil
         self.fromViewInfo = nil
-        self.toLocation = nil
         setAutoLogin(false)
     }
 }

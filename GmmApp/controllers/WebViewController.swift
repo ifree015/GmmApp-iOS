@@ -9,20 +9,37 @@ import UIKit
 import WebKit
 import CoreLocation
 
+let commonProcessPool = WKProcessPool()
 
 protocol InitialViewController {
     var initialViewController: Bool { get set}
+}
+
+protocol ShowWebViewController {
+    func showWebView()
 }
 
 class WebViewController: UIViewController {
     
     let WEB_TIMEOUT: TimeInterval = 10.0
     
+    var configShared: Bool = true
     var webView: WKWebView!
     var urlReqeust: URLRequest!
     var webLoaded: Bool?
     static var locationManagers: [String: GUIDLocationManager] = [:]
     var activityIndicator: UIActivityIndicatorView!
+    var errorImageView: UIImageView?
+        
+//    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+//        super.traitCollectionDidChange(previousTraitCollection)
+//        debug("traitCollectionDidChange")
+//        
+//        if traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+//            debug("hasDifferentColorAppearance")
+//            setThemeViewController(viewController: self, themeMode: Theme.shared.getThemeMode())
+//        }
+//    }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
         //        debug("\(type(of: self))")
@@ -36,7 +53,12 @@ class WebViewController: UIViewController {
     func initWebView() {
         // 1. configuration
         let webViewConfiguration = WKWebViewConfiguration()
-        //webViewConfiguration.processPool = commonProcessPool
+        if configShared {
+            //webViewConfiguration.websiteDataStore = WKWebsiteDataStore.default()
+            webViewConfiguration.processPool = commonProcessPool
+        } else {
+            webViewConfiguration.websiteDataStore = WKWebsiteDataStore.nonPersistent()
+        }
         // javaScript 사용 설정
         webViewConfiguration.defaultWebpagePreferences.allowsContentJavaScript = true // WKWebpagePreferences
         // 자동으로 javaScript를 통해 새 창 열기 설정
@@ -80,6 +102,7 @@ class WebViewController: UIViewController {
         webView.allowsBackForwardNavigationGestures = false
     }
     
+    /// WKWebView의 쿠키들을 HTTPCookieStorage.shared에 동기화
     func syncCookiesAtHTTPCookieStorage(completionHandler: (() -> Void)?) {
         HTTPCookieStorage.shared.cookieAcceptPolicy = .always
         self.webView.configuration.websiteDataStore.httpCookieStore.getAllCookies({(cookies: [HTTPCookie]) -> Void in
@@ -90,8 +113,10 @@ class WebViewController: UIViewController {
         })
     }
     
+    /// HTTPCookieStorage.shared의 쿠키들을 WKWebView에 동기화
     func syncCookiesAtWebView(completion: (() -> Void)?) {
         if let cookies = HTTPCookieStorage.shared.cookies {
+            
             let group = DispatchGroup()
             cookies.forEach({ cookie in
                 group.enter()
@@ -102,7 +127,49 @@ class WebViewController: UIViewController {
             group.notify(queue: .main) {
                 completion?()
             }
+            
         }
+    }
+    
+    ///  인증  tokens 설정
+    func setAuthTokens(completion: @escaping () -> Void) {
+        //        guard let loginInfo = UserInformation.shared.loginInfo else {
+        //            return
+        //        }
+        //        guard let accessTokenCookie = HTTPCookie(properties: [
+        //            .domain: "",
+        //            .path: "/",
+        //            .name: "accessToken",
+        //            .value: loginInfo.accessToken,
+        //            .secure: (BuildMode.current == .debug) ? "FALSE" : "TRUE"
+        ////            .expires: NSDate(timeIntervalSinceNow: TimeInterval(loginInfo.appTimeout * 60)
+        //            ]) else { return }
+        //        guard let refreshTokenCookie = HTTPCookie(properties: [
+        //            .domain: "",
+        //            .path: "/",
+        //            .name: "refreshToken",
+        //            .value: loginInfo.refreshToken,
+        //            .secure: (BuildMode.current == .debug) ? "FALSE" : "TRUE"
+        //            ]) else { return }
+        //        let cookies = [accessTokenCookie, refreshTokenCookie]
+        
+        guard UserInformation.shared.loginInfo != nil, let webViewController = self.navigationController?.viewControllers[0] as? WebViewController else {
+            return
+        }
+        webViewController.webView.configuration.websiteDataStore.httpCookieStore.getAllCookies({(cookies: [HTTPCookie]) -> Void in
+            
+            let group = DispatchGroup()
+            cookies.forEach { cookie in
+                group.enter()
+                self.webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie) {
+                    group.leave()
+                }
+            }
+            group.notify(queue: .main) {
+                completion()
+            }
+            
+        })
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -110,6 +177,7 @@ class WebViewController: UIViewController {
         
         debug("viewWillAppear")
         if let webLoaded = self.webLoaded, !webLoaded {
+            hideErrorImage()
             if webView.url == nil {
                 webView.load(urlReqeust)
             } else {
@@ -128,19 +196,56 @@ class WebViewController: UIViewController {
     }
     
     func startActivityIndicator() {
+        if self.activityIndicator != nil {
+            return
+        }
+        
         activityIndicator = UIActivityIndicatorView()
         activityIndicator.frame = window.frame
         activityIndicator.style = UIActivityIndicatorView.Style.large
         activityIndicator.startAnimating()
-        
         self.view.addSubview(activityIndicator)
     }
     
     func stopActivityIndicator() {
-        if let activityIndicator = self.activityIndicator, activityIndicator.isAnimating {
-            activityIndicator.stopAnimating()
-            activityIndicator.isHidden = true
+        guard let activityIndicator = self.activityIndicator else {
+            return
         }
+        
+        self.activityIndicator = nil
+        activityIndicator.stopAnimating()
+        activityIndicator.isHidden = true
+        activityIndicator.removeFromSuperview()
+    }
+    
+    func showErrorImage() {
+        if self.errorImageView != nil {
+            return
+        }
+        
+        let errorImageView = UIImageView()
+        self.errorImageView = errorImageView
+        errorImageView.alpha = 0
+        errorImageView.tintColor = Theme.shared.getTabBarTintColor(self)
+        errorImageView.image = UIImage(systemName: "quote.bubble")
+        errorImageView.translatesAutoresizingMaskIntoConstraints = false
+        self.view.addSubview(errorImageView)
+        errorImageView.snp.makeConstraints { make in
+            make.centerX.centerY.equalTo(self.view)
+            make.width.height.equalTo(128)
+        }
+        UIView.animate(withDuration: 0.3, animations: {
+            errorImageView.alpha = 1
+        })
+    }
+    
+    func hideErrorImage() {
+        guard let errorImageView = self.errorImageView else {
+            return
+        }
+        self.errorImageView = nil
+        errorImageView.isHidden = true
+        errorImageView.removeFromSuperview()
     }
 }
 
@@ -205,30 +310,24 @@ extension WebViewController: WKNavigationDelegate {
         stopActivityIndicator()
         webLoaded = true
         
-        if let from = UserInformation.shared.from, UserInformation.shared.loginInfo != nil {
-            var pathname = from
-            if let searchIndex = from.firstIndex(of: "?") {
-                pathname = String(from[from.startIndex..<searchIndex])
-            }
-            debug("from: \(from), pathname: \(pathname)")
-            
-            if AppEnvironment.centPageURL.absoluteString.hasSuffix(pathname) {
-                self.tabBarController?.selectedIndex = 0
-            } else if AppEnvironment.trcnPageURL.absoluteString.hasSuffix(pathname) {
-                self.tabBarController?.selectedIndex = 2
-            } else if !AppEnvironment.mainPageURL.absoluteString.hasSuffix(pathname) && from.count > 0 {
-                let viewInfo = UserInformation.shared.fromViewInfo
-                // shorter: 200, short: 250, standard: 300
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) { [weak self] in
-                    var data: [String: Any] = ["location": from]
-                    if viewInfo != nil {
-                        data["viewInfo"] = viewInfo
-                    }
-                    self?.pushView(data)
+        if UserInformation.shared.loginInfo != nil {
+            if let from = UserInformation.shared.from, from.count > 0 {
+                debug("from: \(from)")
+                
+                var data: [String: Any] = ["location": from]
+                if UserInformation.shared.fromViewInfo != nil {
+                    data["viewInfo"] = UserInformation.shared.fromViewInfo
                 }
+                self.navigateView(data, reloaded: false, delayed: true)
+                UserInformation.shared.from = nil
+                UserInformation.shared.fromViewInfo = nil
+            } else if let toLocation = UserInformation.shared.toLocation, toLocation.count > 0 {
+                debug("toLocation: \(toLocation)")
+                
+                let data: [String: Any] = ["location": toLocation]
+                self.navigateView(data, reloaded: false, delayed: true)
+                UserInformation.shared.toLocation = nil
             }
-            UserInformation.shared.from = nil
-            UserInformation.shared.fromViewInfo = nil
         }
     }
     
@@ -237,7 +336,23 @@ extension WebViewController: WKNavigationDelegate {
         
         stopActivityIndicator()
         webLoaded = false
-        alert(title: "접속 실패", message: "\n 사이트 접속에 실패했습니다. 서버나 네트워크를 확인해주세요!")
+        let nsError = error as NSError;
+        switch nsError.code {
+        case -1009:
+            alert(title: "네트워크 오류", message: "네트워크 연결을 확인하여 주세요!")
+            if let showWebViewController = self as? ShowWebViewController {
+                showWebViewController.showWebView()
+            }
+        case -1004:
+            alert(title: "서버 오류", message: "사이트 접속에 실패했습니다. 서버를 확인하여 주세요!")
+            if let showWebViewController = self as? ShowWebViewController {
+                showWebViewController.showWebView()
+            }
+        default:
+            alert(title: "접속 실패", message: nsError.localizedDescription)
+            //alert(title: "접속 실패", message: "\n 사이트 접속에 실패했습니다. 서버나 네트워크를 확인해주세요!")
+        }
+        showErrorImage()
     }
     
     func webView(_ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error) {

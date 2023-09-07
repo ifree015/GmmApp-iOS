@@ -23,7 +23,7 @@ class HomeViewController: WebViewController {
     
     @IBOutlet var launch: UIImageView!
     @IBOutlet var brand: UILabel!
-    
+        
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -34,7 +34,7 @@ class HomeViewController: WebViewController {
         webView.scrollView.showsVerticalScrollIndicator = false
         
         // 2. webpage loading
-         urlReqeust = URLRequest(url: AppEnvironment.mainPageURL, timeoutInterval: WEB_TIMEOUT)
+        urlReqeust = URLRequest(url: AppEnvironment.mainPageURL, timeoutInterval: WEB_TIMEOUT)
         self.webView.load(urlReqeust)
         
         // 3. views visible
@@ -63,7 +63,7 @@ class HomeViewController: WebViewController {
     }
 }
 
-extension HomeViewController: WebViewBridge {
+extension HomeViewController: WebViewBridge, ShowWebViewController {
     func addMessageHandlers(_ userContentController: WKUserContentController) {
 //        userContentController.add(self, name: "showWebView")
         userContentController.add(self, name: "loggedIn")
@@ -89,6 +89,13 @@ extension HomeViewController: WebViewBridge {
             //            let delayTime = 0.1
             //            DispatchQueue.main.asyncAfter(deadline: .now() + delayTime) {
             self.showWebView()
+            if let toLocation = UserInformation.shared.toLocation, toLocation.count > 0 {
+                debug("toLocation: \(toLocation)")
+                
+                let data: [String: Any] = ["location": toLocation]
+                self.navigateView(data, reloaded: false, delayed: true)
+                UserInformation.shared.toLocation = nil
+            }
             //            }            
 //            self.pushView(["location": "/trcndsbl/trcndsbldetail/11100/20230817100064"])
         default:

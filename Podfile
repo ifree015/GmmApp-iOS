@@ -8,4 +8,16 @@ target 'GmmApp' do
   # Pods for GmmApp
   pod 'SnapKit', '~> 5.6.0'
   pod 'Toast-Swift', '~> 5.0.1'
+  pod 'Firebase/Analytics'
+  pod 'Firebase/Messaging'
+end
+
+post_install do |installer|
+    installer.generated_projects.each do |project|
+          project.targets.each do |target|
+              target.build_configurations.each do |config|
+                  config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '16.2'
+               end
+          end
+   end
 end

@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import WebKit
 import SnapKit
 
 class PushViewController: WebViewController {
@@ -26,13 +27,17 @@ class PushViewController: WebViewController {
         initViewController()
         
         // 2. init web view
+//        configShared = false
         initWebView()
+        self.webView.scrollView.delegate = self
         
         // 3. webpage loading
-        let url = URL(string: AppEnvironment.mainPageURL.absoluteString + location)
-        let urlReqeust = URLRequest(url: url!)
-        self.webView.load(urlReqeust)
-        self.webView.scrollView.delegate = self
+        let encodedLocation = location.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed)!
+        let url = URL(string: AppEnvironment.mainPageURL.absoluteString + encodedLocation)
+        urlReqeust = URLRequest(url: url!)
+//        setAuthTokens { [weak self] in
+            self.webView.load(urlReqeust)
+//        }
         
         // 4. style
         changeUserInterfaceStyle()
@@ -68,7 +73,7 @@ class PushViewController: WebViewController {
         
         if let title = viewInfo["title"] as? String, title.count > 0  {
             if let subTitle = viewInfo["subTitle"] as? String, subTitle.count > 0 {
-//                navigationBar.standardAppearance.titlePositionAdjustment = UIOffset(horizontal:0, vertical: 0)
+                //                navigationBar.standardAppearance.titlePositionAdjustment = UIOffset(horizontal:0, vertical: 0)
                 let titleView = UIView()
                 titleView.clipsToBounds = true
                 
@@ -160,14 +165,11 @@ class PushViewController: WebViewController {
         super.viewWillAppear(animated)
         
         //        self.navigationController?.isNavigationBarHidden = false
-        let barHidden = viewInfo["barHidden"] as? Bool ?? false
-        if barHidden {
-            self.navigationBar.isHidden = barHidden
+        if viewInfo["barHidden"] as? Bool ?? false && !self.navigationBar.isHidden {
+            self.navigationBar.isHidden = true
             navigationBar.snp.updateConstraints {make in
                 make.bottom.equalTo(navigationBar.snp.top).offset(0)
             }
-        } else {
-            self.navigationBar.isHidden = false
         }
         
         //        if let barSwipable = viewInfo["barSwipable"] as? Bool {
@@ -208,14 +210,14 @@ extension PushViewController: UIScrollViewDelegate {
                     UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
                         self.navItem.titleView?.bounds.origin = .init(x: 0, y: self.NAVIGATION_BAR_HEIGHT)
                     })
-//                    self.view.layoutIfNeeded()
+                    //                    self.view.layoutIfNeeded()
                 }
             } else {
                 self.navItem.titleView?.bounds.origin = .init(x: 0, y: 0)
             }
         }
         
-        if viewInfo["barSwipable"] as? Bool ?? false {
+        if viewInfo["barSwipable"] as? Bool ?? false && !navigationBar.isHidden {
             if scrollView.contentOffset.y > 0 {
                 navigationBar.snp.updateConstraints{ make in
                     if scrollView.contentOffset.y < (NAVIGATION_BAR_HEIGHT - 8) {
@@ -224,7 +226,7 @@ extension PushViewController: UIScrollViewDelegate {
                         UIView.animate(withDuration: 0.2, delay: 0, options: .curveEaseOut, animations: {
                             make.bottom.equalTo(self.navigationBar.snp.top).offset(-self.NAVIGATION_BAR_HEIGHT)
                         })
-//                        self.view.layoutIfNeeded()
+                        //                        self.view.layoutIfNeeded()
                     }
                 }
             } else {

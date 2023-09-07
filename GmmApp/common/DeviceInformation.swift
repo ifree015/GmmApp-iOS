@@ -58,4 +58,8 @@ struct DeviceInformation {
     func getRegistrationToken() -> String? {
         return UserDefaults.standard.string(forKey: "registrationToken")
     }
+    
+    func setRegistrationToken(_ token: String) {
+        UserDefaults.standard.set(token, forKey: "registrationToken")
+    }
 }

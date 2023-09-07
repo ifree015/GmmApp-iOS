@@ -7,6 +7,7 @@
 
 import Foundation
 import CoreLocation
+import UserNotifications
 
 struct PermissionUtils {
     static func hasPermissions(permissions: String...) -> Bool {
@@ -24,6 +25,48 @@ struct PermissionUtils {
         return true
     }
     
+    @discardableResult
+    static func requestPushNotificationPermission(completion: @escaping (Bool) -> Void) -> UNUserNotificationCenter {
+        let authOptions: UNAuthorizationOptions = [.alert, .badge, .sound]
+        let center = UNUserNotificationCenter.current()
+        
+        center.requestAuthorization(options: authOptions) { granted, error in
+            log("UserNotification granted: \(granted)")
+            if let error = error {
+                log("Error: \(error)")
+            }
+            completion(granted)
+        }
+        
+        return center
+     }
+    
+    static func isPushNotificationPermission(completion: @escaping (Bool) -> Void)  {
+        let center = UNUserNotificationCenter.current()
+        
+        center.getNotificationSettings(completionHandler: { settings in
+            switch settings.authorizationStatus {
+            case .authorized, .provisional:
+                debug("authorized")
+                //      case .denied:
+                //        debug("denied")
+                //      case .notDetermined:
+                //        debug("not determined, ask user for permission now")
+                return completion(true)
+            default:
+                return completion(false)
+            }
+        })
+    }
+    
+    @discardableResult
+    static func requestLocationPermission(delegate: CLLocationManagerDelegate) -> CLLocationManager {
+        let locationManger = CLLocationManager();
+        locationManger.delegate = delegate
+        locationManger.requestWhenInUseAuthorization()
+        return locationManger
+     }
+    
     static func isLocationPermission() -> Bool {
         let authorizationStatus: CLAuthorizationStatus
         if #available(iOS 14, *) {
@@ -36,12 +79,5 @@ struct PermissionUtils {
         }
         return true
     }
-    
-    static func requestLocationPermission(delegate: CLLocationManagerDelegate) -> CLLocationManager {
-        let locationManger = CLLocationManager();
-        locationManger.delegate = delegate
-        locationManger.requestWhenInUseAuthorization()
-        return locationManger
-     }
 }
 

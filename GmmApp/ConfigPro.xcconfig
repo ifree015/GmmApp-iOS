@@ -10,6 +10,7 @@
 #include "Pods/Target Support Files/Pods-GmmApp/Pods-GmmApp.release.xcconfig"
 APP_BUNDLE_ID=kr.co.tmoney.bfcs.gmmapp2
 APP_NAME=단말기현장관리
+APS_ENV=development
 
 WEB_ROOT_URL=https:/${}/bfcs.tmoney.co.kr/html/gmm/index.html
 LOGIN_PAGE_URL=${WEB_ROOT_URL}#/login

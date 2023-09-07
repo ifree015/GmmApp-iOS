@@ -16,6 +16,17 @@ class LoginViewController: WebViewController, InitialViewController {
     
     var initialViewController = false
     
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        debug("traitCollectionDidChange")
+        
+        if !Theme.shared.isManualMode() && traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
+            debug("hasDifferentColorAppearance")
+            self.view.backgroundColor = Theme.shared.getBackgroundColor(self)
+            setThemeViewController(viewController: self, themeMode: Theme.shared.getThemeMode())
+        }
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -46,7 +57,7 @@ class LoginViewController: WebViewController, InitialViewController {
     }
 }
 
-extension LoginViewController: WebViewBridge {
+extension LoginViewController: WebViewBridge, ShowWebViewController {
     func addMessageHandlers(_ userContentController: WKUserContentController) {
         userContentController.add(self, name: "showWebView")
         userContentController.add(self, name: "loggedIn")
@@ -84,7 +95,7 @@ extension LoginViewController: WebViewBridge {
             log("not matched message")
         }
     }
-    
+        
     func showWebView() {
         if (self.webView.isHidden) {
             self.changeUserInterfaceStyle(true)
