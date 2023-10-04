@@ -5,20 +5,19 @@
 //  Created by GwangHyeok Yu on 2023/07/19.
 //
 
-import Foundation
 import UIKit
 
-class MainTabBarController: UITabBarController, InitialViewController {
-    var initialViewController = false
+class MainTabBarController: UITabBarController, InitViewController {
+    var initViewController = false
     
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         debug("traitCollectionDidChange")
         
         if !Theme.shared.isManualMode() && traitCollection.hasDifferentColorAppearance(comparedTo: previousTraitCollection) {
-            debug("hasDifferentColorAppearance")
+            debug("hasDifferentColorAppearance")            
             if let navigationController = self.selectedViewController as? TabNavigationController, let webViewController = navigationController.topViewController as? WebViewController {
-                webViewController.view.backgroundColor = Theme.shared.getBackgroundColor(self)
+                webViewController.setThemeWebViewController()
                 webViewController.setThemeViewController(viewController: self, themeMode: Theme.shared.getThemeMode())
             }
         }
@@ -30,21 +29,20 @@ class MainTabBarController: UITabBarController, InitialViewController {
         debug("viewDidLoad")
         
         // 1. init app
-        GmmApplication.shared.initialize(self)
-        
-        // 2. animation
-        self.delegate = self
-        
-        // 3. init tabBar Controller
-        if (initialViewController) {
+        if initViewController {
+            GmmApplication.shared.uiInitialize(self)
             self.tabBar.isHidden = true
         }
+                
+        // 2. animation
+        self.delegate = self
+   
+        // 3. select tab
         self.selectedIndex = 1
-        //        GmmApplication.shared.gggghgtqsendNotification(title: "test", body: "test")
     }
 }
 
-// reference: https://gist.github.com/dsoike/caa34a2605306f28c3061efc4920ba13
+/// reference: https://gist.github.com/dsoike/caa34a2605306f28c3061efc4920ba13
 extension MainTabBarController: UITabBarControllerDelegate {
     
     //    func tabBarController(_ tabBarController: UITabBarController, didSelect viewController: UIViewController) {

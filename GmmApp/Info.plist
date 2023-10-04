@@ -4,6 +4,8 @@
 <dict>
 	<key>FirebaseAutomaticScreenReportingEnabled</key>
 	<string>NO</string>
+	<key>UIViewControllerBasedStatusBarAppearance</key>
+	<true/>
 	<key>FirebaseAppDelegateProxyEnabled</key>
 	<string>NO</string>
 	<key>LOGIN_PAGE_URL</key>
@@ -17,6 +19,8 @@
 	</dict>
 	<key>UIApplicationSceneManifest</key>
 	<dict>
+		<key>UIApplicationSupportsTabbedSceneCollection</key>
+		<false/>
 		<key>UIApplicationSupportsMultipleScenes</key>
 		<false/>
 		<key>UISceneConfigurations</key>
@@ -40,5 +44,9 @@
 	</array>
 	<key>WEB_ROOT_URL</key>
 	<string>$(WEB_ROOT_URL)</string>
+    <key>API_DOMAIN</key>
+    <string>${API_DOMAIN}</string>
+    <key>API_URL</key>
+    <string>${API_URL}</string>
 </dict>
 </plist>

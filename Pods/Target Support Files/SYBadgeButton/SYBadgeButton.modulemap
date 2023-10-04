@@ -1,0 +1,6 @@
+framework module SYBadgeButton {
+  umbrella header "SYBadgeButton-umbrella.h"
+
+  export *
+  module * { export * }
+}

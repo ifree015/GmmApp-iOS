@@ -13,9 +13,10 @@ struct UserInformation {
     static var shared = UserInformation()
 
     var loginInfo: LoginInfo?
-    var from: String?
-    var fromViewInfo: [String: Any]?
-    var toLocation: String?
+    var locations: Array<[String: Any]> = []
+//    var from: String?
+//    var fromViewInfo: [String: Any]?
+//    var toLocation: String?
         
     private init() {
     }
@@ -38,11 +39,21 @@ struct UserInformation {
         UserDefaults.standard.set(autoLogin, forKey: "autoLogin")
     }
     
+    func getRefreshToken() -> String? {
+        return UserDefaults.standard.string(forKey: "refreshToken")
+    }
+    
+    func setRefreshToken(_ refreshToken: String?) {
+        UserDefaults.standard.set(refreshToken, forKey: "refreshToken")
+    }
+    
     mutating func clearLoginInfo() {
         self.loginInfo = nil
-        self.from = nil
-        self.fromViewInfo = nil
+//        self.from = nil
+//        self.fromViewInfo = nil
+        self.locations = []
         setAutoLogin(false)
+        setRefreshToken(nil)
     }
 }
 

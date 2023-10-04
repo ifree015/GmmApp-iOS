@@ -16,6 +16,10 @@ class GmmApplication: NSObject {
     var initialized: Bool = false
     var uiInitialized: Bool = false
     var locationManager: CLLocationManager!
+        
+    func getAppName() -> String {
+        return "GmmApp"
+    }
     
     override private init() {
         super.init()
@@ -23,7 +27,7 @@ class GmmApplication: NSObject {
     
     func initialize() {
         debug("initialize")
-        if initialized {
+        guard !initialized else {
             return
         }
         self.initialized = true
@@ -46,8 +50,8 @@ class GmmApplication: NSObject {
         NotificationCenter.default.addObserver(self, selector: #selector(didRecievePushNotification(_:)), name: NSNotification.Name.pushNotification, object: nil)
     }
     
-    func initialize(_ viewController: UIViewController) {
-        if uiInitialized {
+    func uiInitialize(_ viewController: UIViewController) {
+        guard !uiInitialized else {
             return
         }
         self.uiInitialized = true
@@ -112,9 +116,9 @@ class GmmApplication: NSObject {
             //            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
             //                if UserInformation.shared.loginInfo != nil {
             if let webViewController = window.rootViewController as? WebViewController {
-                webViewController.navigateView(data, delayed: true)
+                webViewController.navigateView(data)
             } else if let tabBarController = window.rootViewController as? UITabBarController, let navigationController = tabBarController.selectedViewController as? UINavigationController, let webViewController = navigationController.topViewController as? WebViewController {
-                webViewController.navigateView(data, reloaded: true, delayed: true)
+                webViewController.navigateView(data)
             }
             let badgeNumber = UIApplication.shared.applicationIconBadgeNumber - 1
             if  badgeNumber >= 0 {
@@ -125,10 +129,12 @@ class GmmApplication: NSObject {
             //                }
             //            }
         } else {
-            UserInformation.shared.toLocation = toLocation
+            let locationData: [String: Any] = ["location": toLocation]
+            UserInformation.shared.locations.append(locationData)
         }
     }
     
+    /// GmmApplication.shared.sendNotification(title: "test", body: "test")
     func sendNotification(title: String, body: String, seconds: Double = 0.3) {
         let content = UNMutableNotificationContent()
         content.title = title
@@ -176,8 +182,4 @@ extension GmmApplication: CLLocationManagerDelegate {
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         debug("errored: \(error)")
     }
-}
-
-extension Notification.Name {
-    static let pushNotification = Notification.Name("pushNotification")
 }

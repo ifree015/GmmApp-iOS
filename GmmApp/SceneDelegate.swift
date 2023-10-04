@@ -27,8 +27,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         } else {
             rootViewController = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
         }
-        if var initialViewController = rootViewController as? InitialViewController {
-            initialViewController.initialViewController = true
+        if var initialViewController = rootViewController as? InitViewController {
+            initialViewController.initViewController = true
         }
         
         window = UIWindow(windowScene: windonScene)

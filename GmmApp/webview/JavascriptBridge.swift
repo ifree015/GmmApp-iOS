@@ -53,15 +53,7 @@ class JavascriptBridge {
             bridge.addMessageHandlers(userContentController)
         }
         
-        if let userInfo = UserInformation.shared.loginInfo?.userInfo, let data = try? JSONSerialization.data(withJSONObject: userInfo), let value = String(data: data, encoding: .utf8) {
-            //            debug("\(value)")
-            let script = WKUserScript(
-                source: "window.sessionStorage.setItem('userInfo', '\(value)');",
-                injectionTime: .atDocumentStart,
-                forMainFrameOnly: true
-            )
-            userContentController.addUserScript(script)
-        }
+        setUserInfo(userContentController)
         if let data = try? JSONEncoder().encode(AppInfo.getAppInfo()), let value = String(data: data, encoding: .utf8) {
             //            debug("\(value)")
             let script = WKUserScript(
@@ -80,6 +72,18 @@ class JavascriptBridge {
 #endif
         
         return userContentController
+    }
+    
+    static func setUserInfo(_ userContentController: WKUserContentController) {
+        if let userInfo = UserInformation.shared.loginInfo?.userInfo, let data = try? JSONSerialization.data(withJSONObject: userInfo), let value = String(data: data, encoding: .utf8) {
+            //            debug("\(value)")
+            let script = WKUserScript(
+                source: "window.sessionStorage.setItem('userInfo', '\(value)');",
+                injectionTime: .atDocumentStart,
+                forMainFrameOnly: true
+            )
+            userContentController.addUserScript(script)
+        }
     }
 }
 
@@ -215,103 +219,137 @@ extension WebViewController: WKScriptMessageHandler {
         defer {
             Theme.shared.setManualMode(false)
         }
-        self.view.backgroundColor = Theme.shared.getBackgroundColor(self)
-        // 변경 순서: window 스타일 변경 -> status bar 변경
-        debug("\(type(of: self))")
         
+//        setThemeWebViewController()
+        // 변경 순서: window 스타일 변경 -> status bar 변경
+//        debug("\(type(of: self))")
+        debug("\(type(of: window.rootViewController!))")
         setThemeViewController(viewController: window.rootViewController!, themeMode: themeMode)
     }
     
-    func setThemeViewController(viewController: UIViewController, themeMode: String) {
+    func setThemeWebViewController() {
+        if let modalWebViewController = self as? ModalWebViewController {
+            if [UIModalPresentationStyle.fullScreen, UIModalPresentationStyle.currentContext].contains(modalWebViewController.modalPresentationStyle) {
+                self.view.backgroundColor = Theme.shared.getBackgroundColor()
+            }
+        } else {
+            self.view.backgroundColor = Theme.shared.getBackgroundColor()
+        }
+        self.errorImageView?.tintColor = Theme.shared.getTabBarTintColor()
+    }
+    
+    func setThemeViewController(viewController: UIViewController, themeMode: String, presented: Bool = false) {
         switch viewController {
         case let tabBarController as UITabBarController:
             //            tabBarController.viewControllers?.enumerated().forEach {
             changeTabBarAppearance(tabBarController);
             tabBarController.viewControllers?.forEach {
-                //                if tabBarController.selectedIndex == $0 {
-                //                    return
-                //                }
+                debug("\(type(of: $0))")
                 setThemeViewController(viewController: $0, themeMode: themeMode)
+            }
+            if let presentedViewController = tabBarController.presentedViewController {
+                debug("\(type(of: presentedViewController))")
+                setThemeViewController(viewController: presentedViewController, themeMode: themeMode, presented: true)
             }
         case let navigationController as UINavigationController:
+            changeNavigationBarAppearance(navigationController.navigationBar)
             navigationController.viewControllers.forEach {
+//                debug("\(type(of: $0))")
                 setThemeViewController(viewController: $0, themeMode: themeMode)
             }
-            if let visibleViewController = navigationController.visibleViewController, navigationController.topViewController !== visibleViewController {
-                setThemeViewController(viewController: visibleViewController, themeMode: themeMode)
-            }
+//            if let presentedViewController = navigationController.presentedViewController {
+//                debug("\(type(of: presentedViewController))")
+//                setThemeViewController(viewController: presentedViewController, themeMode: themeMode)
+//            }
         default:
-            if !viewController.isViewLoaded || self === viewController {
+            guard viewController.isViewLoaded else {
                 return
             }
-            viewController.view.backgroundColor = Theme.shared.getBackgroundColor(viewController)
+            debug("\(type(of: viewController))")
             if let webViewController = viewController as? WebViewController, let webView = webViewController.webView {
-                if let pushViewController = viewController as? PushViewController {
-                    changeNavigationBarAppearance(pushViewController.navigationBar)
+                webViewController.setThemeWebViewController()
+                if let customPushWebViewController = viewController as? CustomPushWebViewController {
+                    changeNavigationBarAppearance(customPushWebViewController.navigationBar)
+                } else if let modalWebViewController = viewController as? ModalWebViewController {
+                    changeNavigationBarAppearance(modalWebViewController.navigationBar)
                 }
-                var preferThemeMode = themeMode
-                if preferThemeMode == "system" {
-                    if Theme.shared.getUserInterfaceStyle(webViewController) == .dark {
-                        preferThemeMode = "dark"
-                    } else {
-                        preferThemeMode = "light"
+                if self !== webViewController {
+                    var preferThemeMode = themeMode
+                    if preferThemeMode == "system" {
+                        if Theme.shared.getUserInterfaceStyle() == .dark {
+                            preferThemeMode = "dark"
+                        } else {
+                            preferThemeMode = "light"
+                        }
+                    }
+                    let json: [String : Any] = [
+                        "eventType": "theme",
+                        "themeMode": themeMode,
+                        "preferThemeMode": preferThemeMode
+                    ]
+                    if let data = try? JSONSerialization.data(withJSONObject: json), let value = String(data: data, encoding: .utf8) {
+                        webView.postMessage(data: value)
                     }
                 }
-                let json: [String : Any] = [
-                    "eventType": "theme",
-                    "themeMode": themeMode,
-                    "preferThemeMode": preferThemeMode
-                ]
-                if let data = try? JSONSerialization.data(withJSONObject: json), let value = String(data: data, encoding: .utf8) {
-                    webView.postMessage(data: value)
-                }
+            }
+            if presented, let presentedViewController = viewController.presentedViewController {
+//                debug("\(type(of: presentedViewController)), \(type(of: presentedViewController.presentingViewController!))")
+                setThemeViewController(viewController: presentedViewController, themeMode: themeMode, presented: presented)
             }
         }
     }
     
-    func changeUserInterfaceStyle(_ initialViewController: Bool = false) {
-        if initialViewController {
-            let themeMode = Theme.shared.getThemeMode()
-            Theme.shared.setManualMode(true)
-            if themeMode == "light" {
-                window.overrideUserInterfaceStyle = .light
-            } else if themeMode == "dark" {
-                window.overrideUserInterfaceStyle = .dark
-            } else { // system
-                window.overrideUserInterfaceStyle = .unspecified
-            }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                Theme.shared.setManualMode(false)
-            }
+    func changeUserInterfaceStyle() {
+        let themeMode = Theme.shared.getThemeMode()
+        Theme.shared.setManualMode(true)
+        if themeMode == "light" {
+            window.overrideUserInterfaceStyle = .light
+        } else if themeMode == "dark" {
+            window.overrideUserInterfaceStyle = .dark
+        } else { // system
+            window.overrideUserInterfaceStyle = .unspecified
         }
-        self.view.backgroundColor = Theme.shared.getBackgroundColor(self)
+        DispatchQueue.global().asyncAfter(deadline: .now() + 0.3) {
+            Theme.shared.setManualMode(false)
+        }
         
-        if initialViewController, let tabBarController = window.rootViewController as? UITabBarController {
+        setThemeWebViewController()
+        if let navigationBar = self.navigationController?.navigationBar {
+            changeNavigationBarAppearance(navigationBar)
+        }
+        if let tabBarController = window.rootViewController as? UITabBarController {
             changeTabBarAppearance(tabBarController)
         }
+    }
+    
+    func changeStatusBarBgColor(_ backgroundColor: UIColor?) {
+        let statusBarManager = windowScene.statusBarManager
+        let statusBarView = UIView(frame: statusBarManager?.statusBarFrame ?? .zero)
+        statusBarView.backgroundColor = backgroundColor
+        window.addSubview(statusBarView)
+    }
+    
+    func changeNavigationBarAppearance(_ navigationBar: UINavigationBar?) {
+        let appearance = UINavigationBarAppearance()
+        //                appearance.configureWithOpaqueBackground()
+        appearance.configureWithDefaultBackground()
+        //                appearance.configureWithTransparentBackground()
+        appearance.backgroundColor = Theme.shared.getNaviBarBackgroundColor()
+        appearance.titleTextAttributes = [.foregroundColor: Theme.shared.getNaviBarTintColor(), .font: UIFont.systemFont(ofSize: CGFloat(20))]
+        navigationBar?.tintColor = Theme.shared.getNaviBarTintColor()
+        //        navigationBar?.barTintColor = Theme.shared.getNaviBarTintBackgroundColor(self)
+        navigationBar?.standardAppearance = appearance
+        navigationBar?.scrollEdgeAppearance = navigationBar?.standardAppearance
     }
     
     func changeTabBarAppearance(_ tabBarController: UITabBarController) {
         let appearance = UITabBarAppearance()
         //        appearance.configureWithOpaqueBackground()
         appearance.configureWithDefaultBackground()
-        appearance.backgroundColor = Theme.shared.getBackgroundColor(self)
-        tabBarController.tabBar.tintColor = Theme.shared.getTabBarTintColor(self)
+        appearance.backgroundColor = Theme.shared.getBackgroundColor()
+        tabBarController.tabBar.tintColor = Theme.shared.getTabBarTintColor()
         tabBarController.tabBar.standardAppearance = appearance
         tabBarController.tabBar.scrollEdgeAppearance = tabBarController.tabBar.standardAppearance
-    }
-    
-    func changeNavigationBarAppearance(_ navigationBar: UINavigationBar) {
-        let appearance = UINavigationBarAppearance()
-        //        appearance.configureWithOpaqueBackground()
-        appearance.configureWithDefaultBackground()
-        //        appearance.configureWithTransparentBackground()
-        appearance.backgroundColor = Theme.shared.getNaviBarBackgroundColor(self)
-        appearance.titleTextAttributes = [.foregroundColor: Theme.shared.getNaviBarTintColor(self), .font: UIFont.systemFont(ofSize: CGFloat(20))]
-        navigationBar.tintColor = Theme.shared.getNaviBarTintColor(self)
-        navigationBar.barTintColor = Theme.shared.getNaviBarTintBackgroundColor(self)
-        navigationBar.standardAppearance = appearance
-        navigationBar.scrollEdgeAppearance = navigationBar.standardAppearance
     }
     
     var windowScene: UIWindowScene {
@@ -326,24 +364,28 @@ extension WebViewController: WKScriptMessageHandler {
         guard let from = data["from"] as? String else {
             return
         }
-        if self.window.rootViewController as? LoginViewController != nil {
+        guard self.window.rootViewController as? LoginViewController == nil else {
             debug("it is already a login view.")
             return
         }
         
         UserInformation.shared.clearLoginInfo()
-        UserInformation.shared.from = from
-        if let viewInfo = data["viewInfo"] as? [String: Any] {
-            UserInformation.shared.fromViewInfo = viewInfo
+        if from != "/" {
+            var locationData: [String: Any] = ["location" : from]
+            if let viewInfo = data["viewInfo"] as? [String: Any] {
+                locationData["viewInfo"] = viewInfo
+            }
+            UserInformation.shared.locations.insert(locationData, at: 0)
         }
         
-        let loginViewController = self.storyboard!.instantiateViewController(withIdentifier: "LoginViewController")
+        let storyboard = self.storyboard ?? UIStoryboard(name: "Main", bundle: .main)
+        let loginViewController = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
         if let sceneDelegate = windowScene.delegate as? SceneDelegate {
             sceneDelegate.changeRootVC(loginViewController, animated: true)
         }
     }
     
-    func navigateView(_ data: [String: Any], reloaded: Bool = true, delayed: Bool = false) {
+    func navigateView(_ data: [String: Any]) {
         guard let location = data["location"] as? String else {
             return
         }
@@ -352,19 +394,19 @@ extension WebViewController: WKScriptMessageHandler {
         if let searchIndex = location.firstIndex(of: "?") {
             path = String(location[location.startIndex..<searchIndex])
         }
+        //        var pushNtfcPt: String?
+        //        if let range: Range<String.Index> = location.range(of: "pushNtfcPt=") {
+        //            //let startIndex: Int = location.distance(from: location.startIndex, to: range.upperBound)
+        //            //pushNtfcPt = location[startIndex..<location.count]
+        //            pushNtfcPt = String(location[range.upperBound..<location.endIndex]) // Substring
+        //        }
         debug("location: \(location), path: \(path)")
-        
+                
         var isTabView = true
         if AppEnvironment.centPageURL.absoluteString.hasSuffix(path) {
             self.tabBarController?.selectedIndex = 0
         } else if AppEnvironment.mainPageURL.absoluteString.hasSuffix(path) {
-            if reloaded {
-                self.tabBarController?.selectedIndex = 1
-            } else if let toLocation = UserInformation.shared.toLocation, toLocation.count > 0 { // from과 toLocation이 둘다 있는 경우
-                let data: [String: Any] = ["location": toLocation]
-                self.navigateView(data, reloaded: reloaded, delayed: delayed)
-                UserInformation.shared.toLocation = nil
-            }
+            self.tabBarController?.selectedIndex = 1
         } else if AppEnvironment.trcnPageURL.absoluteString.hasSuffix(path) {
             self.tabBarController?.selectedIndex = 2
         } else {
@@ -378,11 +420,12 @@ extension WebViewController: WKScriptMessageHandler {
                         self?.pushView(data)
                     }
                 } else { // logout 상태라면
-                    UserInformation.shared.toLocation = location
+                    let locationData: [String: Any] = ["location": location]
+                    UserInformation.shared.locations.append(locationData)
                 }
             }
         }
-        if reloaded, isTabView, let navigationController = self.tabBarController?.selectedViewController as? TabNavigationController {
+        if isTabView, let navigationController = self.tabBarController?.selectedViewController as? TabNavigationController {
             navigationController.popToRootViewController(animated: true)
             if let webViewController = navigationController.topViewController as? WebViewController {
                 webViewController.reloadWebPage()
@@ -395,7 +438,7 @@ extension WebViewController: WKScriptMessageHandler {
             return
         }
         
-        let modalViewControlller = ModalViewController()
+        let modalViewControlller = ModalWebViewController()
         //modalViewControlller.hidesBottomBarWhenPushed = true
         if location.hasPrefix("/") {
             location = .init(location.dropFirst())
@@ -408,6 +451,12 @@ extension WebViewController: WKScriptMessageHandler {
                 switch presentationStyle {
                 case "full":
                     modalViewControlller.modalPresentationStyle = .fullScreen
+                case "context":
+                    modalViewControlller.modalPresentationStyle = .currentContext
+                case "overFull":
+                    modalViewControlller.modalPresentationStyle = .overFullScreen
+                case "overContext":
+                    modalViewControlller.modalPresentationStyle = .overCurrentContext
                 default:
                     modalViewControlller.modalPresentationStyle = .automatic
                 }
@@ -423,7 +472,7 @@ extension WebViewController: WKScriptMessageHandler {
             }
         }
         
-        self.present(modalViewControlller, animated: true)
+        present(modalViewControlller, animated: true)
     }
     
     func pushView(_ data: [String: Any]) {
@@ -431,7 +480,7 @@ extension WebViewController: WKScriptMessageHandler {
             return
         }
         
-        let popupViewControlller = PushViewController()
+        let popupViewControlller = PushWebViewController()
         popupViewControlller.hidesBottomBarWhenPushed = true
         if location.hasPrefix("/") {
             location = .init(location.dropFirst())
@@ -441,12 +490,17 @@ extension WebViewController: WKScriptMessageHandler {
             popupViewControlller.viewInfo = viewInfo
         }
         
-        //        self.navigationController?.isNavigationBarHidden = false
-        self.navigationController?.pushViewController(popupViewControlller, animated: true)
+        if let navigationController = self.navigationController {
+            navigationController.pushViewController(popupViewControlller, animated: true)
+        } else if let tabBarController = self.presentingViewController as? UITabBarController, let navigationController = tabBarController.viewControllers?[tabBarController.selectedIndex] as? UINavigationController {
+            self.dismiss(animated: false) {
+                navigationController.pushViewController(popupViewControlller, animated: true)
+            }
+        }
     }
     
     func setViewInfo(viewInfo: [String: Any]) {
-        guard let popupViewControlller = self as? PushViewController else {
+        guard let popupViewControlller = self as? PushWebViewController else {
             return
         }
         
@@ -462,12 +516,14 @@ extension WebViewController: WKScriptMessageHandler {
     }
     
     func loggedOut() {
-        if UserInformation.shared.loginInfo == nil {
+        guard UserInformation.shared.loginInfo != nil else {
             debug("it was already logged out.")
             return
         }
         UserInformation.shared.clearLoginInfo()
-        let loginViewController = self.storyboard!.instantiateViewController(withIdentifier: "LoginViewController")
+        Theme.shared.setThemeMode(nil)
+        let storyboard = self.storyboard ?? UIStoryboard(name: "Main", bundle: .main)
+        let loginViewController = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
         if let sceneDelegate = windowScene.delegate as? SceneDelegate {
             sceneDelegate.changeRootVC(loginViewController, animated: true)
         }
@@ -475,6 +531,7 @@ extension WebViewController: WKScriptMessageHandler {
 }
 
 struct AppInfo: Codable {
+    var moappNm: String
     var mblInhrIdnnVal: String
     var deviceModel: String
     var mblOsKndCd = "I"
@@ -484,7 +541,8 @@ struct AppInfo: Codable {
     var pushTknVal: String?
     
     static func getAppInfo() -> AppInfo {
-        return AppInfo(mblInhrIdnnVal: DeviceInformation.shared.getDeviceId(),
+        return AppInfo(moappNm: GmmApplication.shared.getAppName(),
+                       mblInhrIdnnVal: DeviceInformation.shared.getDeviceId(),
                        deviceModel: DeviceInformation.shared.getDeviceModel(),
                        mbphOsVer: String(format: "iOS %@", DeviceInformation.shared.getOsVersion()),
                        moappVerCd: DeviceInformation.shared.getAppVersionCode(),
@@ -512,35 +570,15 @@ class GUIDLocationManager: CLLocationManager {
     }
 }
 
-extension UIColor {
-    convenience init(red: CGFloat, green: CGFloat, blue: CGFloat) {
-        self.init(red: red / 255.0, green: green / 255.0, blue: blue / 255.0, alpha: 1.0)
-    }
-    
-    convenience init(hexCode: String, alpha: CGFloat = 1.0) {
-        var hexFormatted: String = hexCode.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines).uppercased()
-        
-        if hexFormatted.hasPrefix("#") {
-            hexFormatted = String(hexFormatted.dropFirst())
-        }
-        
-        assert(hexFormatted.count == 6, "Invalid hex code used.")
-        
-        var rgbValue: UInt64 = 0
-        Scanner(string: hexFormatted).scanHexInt64(&rgbValue)
-        
-        self.init(red: CGFloat((rgbValue & 0xFF0000) >> 16) / 255.0,
-                  green: CGFloat((rgbValue & 0x00FF00) >> 8) / 255.0,
-                  blue: CGFloat(rgbValue & 0x0000FF) / 255.0,
-                  alpha: alpha)
-    }
-}
-
 struct Theme {
     static let shared = Theme()
     
+    let textLightColor: UIColor = .white
+    let textDarkColor: UIColor = .init(hexCode: "#FFFFFF", alpha: 0.7)
     let lightBackground: UIColor = .white
     let darkBackground: UIColor = .init(hexCode: "#121212")
+    let lightBackground2: UIColor = .white
+    let darkBackground2: UIColor = .init(hexCode: "#424242")
     let tabBarLightTintColor: UIColor = .init(hexCode: "#9c27b0")
     let tabBarDarkTintColor: UIColor = .init(hexCode: "#ce93d8")
     let naviBarLightBackground: UIColor = .init(hexCode: "#9c27b0")
@@ -551,62 +589,168 @@ struct Theme {
     let naviBarDarkTintColor: UIColor = .init(hexCode: "#ce93d8")
     let subTitleLightColor: UIColor = .init(hexCode: "#ffe0b2")
     let subTitleDarkColor: UIColor = .init(hexCode: "#ffa726", alpha: 0.8)
+    let primaryLightBackground: UIColor = .init(hexCode: "#1976d2")
+    let primaryDarkBackground: UIColor = .init(hexCode: "#90caf9")
+    let secondaryLightBackground: UIColor = .init(hexCode: "#9c27b0")
+    let secondaryDarkBackground: UIColor = .init(hexCode: "#ce93d8")
+    let errorLightBackground: UIColor = .init(hexCode: "#d32f2f")
+    let errorDarkBackground: UIColor = .init(hexCode: "#f44336")
+    let successLightBackground: UIColor = .init(hexCode: "#2e7d32")
+    let successDarkBackground: UIColor = .init(hexCode: "#66bb6a")
+    let warningLightBackground: UIColor = .init(hexCode: "#ed6c02")
+    let warningDarkBackground: UIColor = .init(hexCode: "#ffa726")
+    let infoLightBackground: UIColor = .init(hexCode: "#0288d1")
+    let infoDarkBackground: UIColor = .init(hexCode: "#81d4fa")
+    
     
     private init() {
     }
     
-    func getBackgroundColor(_ viewController: UIViewController) -> UIColor {
-        if getUserInterfaceStyle(viewController) == .light {
+    func getTextColor() -> UIColor {
+        if getUserInterfaceStyle() == .light {
+            return textLightColor
+        } else {
+            return textDarkColor
+        }
+    }
+    
+    func getBackgroundColor() -> UIColor {
+        if getUserInterfaceStyle() == .light {
             return lightBackground
         } else {
             return darkBackground
         }
     }
     
-    func getTabBarTintColor(_ viewController: UIViewController) -> UIColor {
-        if getUserInterfaceStyle(viewController) == .light {
+    func getBackgroundColor2() -> UIColor {
+        if getUserInterfaceStyle() == .light {
+            return lightBackground2
+        } else {
+            return darkBackground2
+        }
+    }
+    
+    func getTabBarTintColor() -> UIColor {
+        if getUserInterfaceStyle() == .light {
             return tabBarLightTintColor
         } else {
             return tabBarDarkTintColor
         }
     }
     
-    func getNaviBarBackgroundColor(_ viewController: UIViewController) -> UIColor {
-        if getUserInterfaceStyle(viewController) == .light {
+    func getNaviBarBackgroundColor() -> UIColor {
+        if getUserInterfaceStyle() == .light {
             return naviBarLightBackground
         } else {
             return naviBarDarkBackground
         }
     }
     
-    func getNaviBarTintBackgroundColor(_ viewController: UIViewController) -> UIColor {
-        if getUserInterfaceStyle(viewController) == .light {
+    func getNaviBarTintBackgroundColor() -> UIColor {
+        if getUserInterfaceStyle() == .light {
             return naviBarLightTintBackground
         } else {
             return naviBarDarkTintBackground
         }
     }
     
-    func getNaviBarTintColor(_ viewController: UIViewController) -> UIColor {
-        if getUserInterfaceStyle(viewController) == .light {
+    //    func getNaviBarTintBackgroundColor(_ viewController: UIViewController, alpha: CGFloat) -> UIColor {
+    //        if getUserInterfaceStyle() == .light {
+    //            return .init(hexCode: "#9c27b0", alpha: alpha)
+    //        } else {
+    //            return .init(hexCode: "#121212", alpha: alpha)
+    //        }
+    //    }
+    
+    func getNaviBarTintColor() -> UIColor {
+        if getUserInterfaceStyle() == .light {
             return naviBarLightTintColor
         } else {
             return naviBarDarkTintColor
         }
     }
     
-    func getSubTitleColor(_ viewController: UIViewController) -> UIColor {
-        if getUserInterfaceStyle(viewController) == .light {
+    func getSubTitleColor() -> UIColor {
+        if getUserInterfaceStyle() == .light {
             return subTitleLightColor
         } else {
             return subTitleDarkColor
         }
     }
     
-    func getUserInterfaceStyle(_ viewController: UIViewController) -> UIUserInterfaceStyle {
+    func getBackgroundColor(color: String) -> UIColor {
+        switch color {
+        case "primary":
+            return getPrimaryBackgroundColor()
+        case "secondary":
+            return getSecondaryBackgroundColor()
+        case "error":
+            return getErrorBackgroundColor()
+        case "success":
+            return getSuccessBackgroundColor()
+        case "warning":
+            return getWarningBackgroundColor()
+        case "info":
+            return getInfoBackgroundColor()
+        case "back2":
+            return getBackgroundColor2()
+        default:
+            return getBackgroundColor()
+        }
+    }
+    
+    func getPrimaryBackgroundColor() -> UIColor {
+        if getUserInterfaceStyle() == .light {
+            return primaryLightBackground
+        } else {
+            return primaryDarkBackground
+        }
+    }
+    
+    func getSecondaryBackgroundColor() -> UIColor {
+        if getUserInterfaceStyle() == .light {
+            return secondaryLightBackground
+        } else {
+            return secondaryDarkBackground
+        }
+    }
+    
+    func getErrorBackgroundColor() -> UIColor {
+        if getUserInterfaceStyle() == .light {
+            return errorLightBackground
+        } else {
+            return errorDarkBackground
+        }
+    }
+    
+    func getSuccessBackgroundColor() -> UIColor {
+        if getUserInterfaceStyle() == .light {
+            return successLightBackground
+        } else {
+            return successDarkBackground
+        }
+    }
+    
+    func getWarningBackgroundColor() -> UIColor {
+        if getUserInterfaceStyle() == .light {
+            return warningLightBackground
+        } else {
+            return warningDarkBackground
+        }
+    }
+    
+    func getInfoBackgroundColor() -> UIColor {
+        if getUserInterfaceStyle() == .light {
+            return infoLightBackground
+        } else {
+            return infoDarkBackground
+        }
+    }
+    
+    func getUserInterfaceStyle() -> UIUserInterfaceStyle {
         let windowScene = UIApplication.shared.connectedScenes.first as! UIWindowScene
         if windowScene.windows.first?.overrideUserInterfaceStyle == .unspecified {
-            return viewController.traitCollection.userInterfaceStyle
+            return windowScene.windows.first!.rootViewController!.traitCollection.userInterfaceStyle
         } else {
             return windowScene.windows.first!.overrideUserInterfaceStyle
         }
@@ -616,7 +760,7 @@ struct Theme {
         return UserDefaults.standard.string(forKey: "themeMode") ?? "system"
     }
     
-    func setThemeMode(_ themeMode: String) {
+    func setThemeMode(_ themeMode: String?) {
         UserDefaults.standard.set(themeMode, forKey: "themeMode")
     }
     
@@ -626,18 +770,5 @@ struct Theme {
     
     func isManualMode() -> Bool {
         UserDefaults.standard.bool(forKey: "manualMode")
-    }
-}
-
-extension String {
-    
-    subscript(_ index: Int) -> Character {
-        return self[self.index(self.startIndex, offsetBy: index)]
-    }
-    
-    subscript(_ range: Range<Int>) -> String {
-        let fromIndex = self.index(self.startIndex, offsetBy: range.startIndex)
-        let toIndex = self.index(self.startIndex,offsetBy: range.endIndex)
-        return String(self[fromIndex..<toIndex])
     }
 }

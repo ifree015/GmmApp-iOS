@@ -70,23 +70,110 @@ public extension UIView {
     
     private var activeToasts: NSMutableArray {
         get {
-            if let activeToasts = objc_getAssociatedObject(self, &ToastKeys.activeToasts) as? NSMutableArray {
+            // if let activeToasts = objc_getAssociatedObject(self, &ToastKeys.activeToasts) as? NSMutableArray {
+            if let activeToasts = getToastKeysActiveToasts() as? NSMutableArray {
                 return activeToasts
             } else {
                 let activeToasts = NSMutableArray()
-                objc_setAssociatedObject(self, &ToastKeys.activeToasts, activeToasts, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                //objc_setAssociatedObject(self, &ToastKeys.activeToasts, activeToasts, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                setToastKeysActiveToasts(activeToasts)
                 return activeToasts
             }
         }
     }
     
+    func getToastKeysTimer(_ toast: UIView) -> Any? {
+      withUnsafePointer(to: &ToastKeys.timer) {
+        return objc_getAssociatedObject(toast, $0)
+      }
+    }
+    
+    func setToastKeysTimer(_ toast: UIView, _ value: Any?) {
+      withUnsafePointer(to: &ToastKeys.timer) {
+          objc_setAssociatedObject(toast, $0, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+      }
+    }
+    
+    func getToastKeysDuration(_ toast: UIView) -> Any? {
+      withUnsafePointer(to: &ToastKeys.duration) {
+        return objc_getAssociatedObject(toast, $0)
+      }
+    }
+    
+    func setToastKeysDuration(_ toast: UIView, _ value: Any?) {
+      withUnsafePointer(to: &ToastKeys.duration) {
+          objc_setAssociatedObject(toast, $0, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+      }
+    }
+    
+    func getToastKeysPoint(_ toast: UIView) -> Any? {
+      withUnsafePointer(to: &ToastKeys.point) {
+        return objc_getAssociatedObject(toast, $0)
+      }
+    }
+    
+    func setToastKeysPoint(_ toast: UIView, _ value: Any?) {
+      withUnsafePointer(to: &ToastKeys.point) {
+          objc_setAssociatedObject(toast, $0, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+      }
+    }
+    
+    func getToastKeysCompletion(_ toast: UIView) -> Any? {
+      withUnsafePointer(to: &ToastKeys.completion) {
+        return objc_getAssociatedObject(toast, $0)
+      }
+    }
+    
+    func setToastKeysCompletion(_ toast: UIView, _ value: Any?) {
+      withUnsafePointer(to: &ToastKeys.completion) {
+          objc_setAssociatedObject(toast, $0, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+      }
+    }
+    
+    func getToastKeysActiveToasts() -> Any? {
+        withUnsafePointer(to: &ToastKeys.activeToasts) {
+            return objc_getAssociatedObject(self, $0)
+        }
+    }
+    
+    func setToastKeysActiveToasts(_ value: Any?) {
+        withUnsafePointer(to: &ToastKeys.activeToasts) {
+            objc_setAssociatedObject(self, $0, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    func getToastKeysActivityView() -> Any? {
+        withUnsafePointer(to: &ToastKeys.activityView) {
+            return objc_getAssociatedObject(self, $0)
+        }
+    }
+    
+    func setToastKeysActivityView(_ value: Any?) {
+        withUnsafePointer(to: &ToastKeys.activityView) {
+            objc_setAssociatedObject(self, $0, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
+    func getToastKeysQueue() -> Any? {
+        withUnsafePointer(to: &ToastKeys.queue) {
+            return objc_getAssociatedObject(self, $0)
+        }
+    }
+    
+    func setToastKeysQueue(_ value: Any?) {
+        withUnsafePointer(to: &ToastKeys.queue) {
+            objc_setAssociatedObject(self, $0, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+    
     private var queue: NSMutableArray {
         get {
-            if let queue = objc_getAssociatedObject(self, &ToastKeys.queue) as? NSMutableArray {
+            if let queue = getToastKeysQueue() as? NSMutableArray {
                 return queue
             } else {
                 let queue = NSMutableArray()
-                objc_setAssociatedObject(self, &ToastKeys.queue, queue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                //objc_setAssociatedObject(self, &ToastKeys.queue, queue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                setToastKeysQueue(queue)
                 return queue
             }
         }
@@ -166,11 +253,14 @@ public extension UIView {
      didTap will be `true` if the toast view was dismissed from a tap.
      */
     func showToast(_ toast: UIView, duration: TimeInterval = ToastManager.shared.duration, point: CGPoint, completion: ((_ didTap: Bool) -> Void)? = nil) {
-        objc_setAssociatedObject(toast, &ToastKeys.completion, ToastCompletionWrapper(completion), .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        //objc_setAssociatedObject(toast, &ToastKeys.completion, ToastCompletionWrapper(completion), .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        setToastKeysCompletion(toast, ToastCompletionWrapper(completion))
         
         if ToastManager.shared.isQueueEnabled, activeToasts.count > 0 {
-            objc_setAssociatedObject(toast, &ToastKeys.duration, NSNumber(value: duration), .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-            objc_setAssociatedObject(toast, &ToastKeys.point, NSValue(cgPoint: point), .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            //objc_setAssociatedObject(toast, &ToastKeys.duration, NSNumber(value: duration), .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            self.setToastKeysDuration(toast, NSNumber(value: duration))
+            //objc_setAssociatedObject(toast, &ToastKeys.point, NSValue(cgPoint: point), .OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+            self.setToastKeysPoint(toast, NSValue(cgPoint: point))
             
             queue.add(toast)
         } else {
@@ -252,7 +342,7 @@ public extension UIView {
      */
     func makeToastActivity(_ position: ToastPosition) {
         // sanity
-        guard objc_getAssociatedObject(self, &ToastKeys.activityView) as? UIView == nil else { return }
+        guard getToastKeysActivityView() as? UIView == nil else { return }
         
         let toast = createToastActivityView()
         let point = position.centerPoint(forToast: toast, inSuperview: self)
@@ -273,7 +363,7 @@ public extension UIView {
      */
     func makeToastActivity(_ point: CGPoint) {
         // sanity
-        guard objc_getAssociatedObject(self, &ToastKeys.activityView) as? UIView == nil else { return }
+        guard getToastKeysActivityView() as? UIView == nil else { return }
         
         let toast = createToastActivityView()
         makeToastActivity(toast, point: point)
@@ -283,12 +373,13 @@ public extension UIView {
      Dismisses the active toast activity indicator view.
      */
     func hideToastActivity() {
-        if let toast = objc_getAssociatedObject(self, &ToastKeys.activityView) as? UIView {
+        if let toast = getToastKeysActivityView() as? UIView {
             UIView.animate(withDuration: ToastManager.shared.style.fadeDuration, delay: 0.0, options: [.curveEaseIn, .beginFromCurrentState], animations: {
                 toast.alpha = 0.0
             }) { _ in
                 toast.removeFromSuperview()
-                objc_setAssociatedObject(self, &ToastKeys.activityView, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                //objc_setAssociatedObject(self, &ToastKeys.activityView, nil, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+                self.setToastKeysActivityView(nil)
             }
         }
     }
@@ -299,7 +390,8 @@ public extension UIView {
         toast.alpha = 0.0
         toast.center = point
         
-        objc_setAssociatedObject(self, &ToastKeys.activityView, toast, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        //objc_setAssociatedObject(self, &ToastKeys.activityView, toast, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        setToastKeysActivityView(toast)
         
         self.addSubview(toast)
         
@@ -356,12 +448,13 @@ public extension UIView {
         }) { _ in
             let timer = Timer(timeInterval: duration, target: self, selector: #selector(UIView.toastTimerDidFinish(_:)), userInfo: toast, repeats: false)
             RunLoop.main.add(timer, forMode: .common)
-            objc_setAssociatedObject(toast, &ToastKeys.timer, timer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            //objc_setAssociatedObject(toast, &ToastKeys.timer, timer, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            self.setToastKeysTimer(toast, timer)
         }
     }
     
     private func hideToast(_ toast: UIView, fromTap: Bool) {
-        if let timer = objc_getAssociatedObject(toast, &ToastKeys.timer) as? Timer {
+        if let timer = self.getToastKeysTimer(toast)  as? Timer {
             timer.invalidate()
         }
         
@@ -371,11 +464,11 @@ public extension UIView {
             toast.removeFromSuperview()
             self.activeToasts.remove(toast)
             
-            if let wrapper = objc_getAssociatedObject(toast, &ToastKeys.completion) as? ToastCompletionWrapper, let completion = wrapper.completion {
+            if let wrapper = self.getToastKeysCompletion(toast) as? ToastCompletionWrapper, let completion = wrapper.completion {
                 completion(fromTap)
             }
             
-            if let nextToast = self.queue.firstObject as? UIView, let duration = objc_getAssociatedObject(nextToast, &ToastKeys.duration) as? NSNumber, let point = objc_getAssociatedObject(nextToast, &ToastKeys.point) as? NSValue {
+            if let nextToast = self.queue.firstObject as? UIView, let duration = self.getToastKeysDuration(nextToast) as? NSNumber, let point = self.getToastKeysPoint(nextToast) as? NSValue {
                 self.queue.removeObject(at: 0)
                 self.showToast(nextToast, duration: duration.doubleValue, point: point.cgPointValue)
             }

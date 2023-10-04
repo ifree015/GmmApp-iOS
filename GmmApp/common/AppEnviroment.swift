@@ -27,6 +27,8 @@ enum AppEnvironment {
         case webRootURL = "WEB_ROOT_URL"
         case loginPageURL = "LOGIN_PAGE_URL"
         case mainPageURL = "MAIN_PAGE_URL"
+        case apiDomain = "API_DOMAIN"
+        case apiURL = "API_URL"
     }
     
     private static var infoDictionary: [String: Any] { // type 연산 property
@@ -78,5 +80,22 @@ enum AppEnvironment {
     
     static let trcnPageURL: URL = {
         return URL(string: mainPageURL.absoluteString + "trcndsbl")!
+    }()
+    
+    static let apiDomain: String = {
+        guard let apiDomain = AppEnvironment.infoDictionary[PlistKeys.apiDomain.rawValue] as? String else {
+            fatalError("API Domain not set in plist for this environment")
+        }
+        return apiDomain
+    }()
+    
+    static let apiURL: URL = {
+        guard let apiURLStr = AppEnvironment.infoDictionary[PlistKeys.apiURL.rawValue] as? String else {
+            fatalError("API URL not set in plist for this environment")
+        }
+        guard let url = URL(string: apiURLStr) else {
+            fatalError("API URL is invalid")
+        }
+        return url
     }()
 }
