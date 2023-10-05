@@ -115,8 +115,6 @@
 		8CA9B12429F7929B00BAE335 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		8CA9B12629F792CF00BAE335 /* ConfigPro.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ConfigPro.xcconfig; sourceTree = "<group>"; };
 		8CB7526B2A7A175B0037A5CD /* PushWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PushWebViewController.swift; sourceTree = "<group>"; };
-		8CC836B92A97289700D83A51 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
-		8CC836BB2A973CB700D83A51 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		8CC836BD2A97406C00D83A51 /* GmmApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GmmApp.entitlements; sourceTree = "<group>"; };
 		8CCDBA6F2AA6100B00DF4624 /* LogUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LogUtils.swift; sourceTree = "<group>"; };
 		8CDA79F42AA70C1F0049DC9C /* ModalWebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModalWebViewController.swift; sourceTree = "<group>"; };
@@ -322,7 +320,6 @@
 		8CC836C12A97802400D83A51 /* Prod */ = {
 			isa = PBXGroup;
 			children = (
-				8CC836BB2A973CB700D83A51 /* GoogleService-Info.plist */,
 			);
 			path = Prod;
 			sourceTree = "<group>";
@@ -330,7 +327,6 @@
 		8CC836C22A97803A00D83A51 /* Dev */ = {
 			isa = PBXGroup;
 			children = (
-				8CC836B92A97289700D83A51 /* GoogleService-Info.plist */,
 			);
 			path = Dev;
 			sourceTree = "<group>";
